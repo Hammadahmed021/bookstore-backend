@@ -32,7 +32,7 @@ app.use("/api/user", userRoutes);
 
 async function main() {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    await mongoose.connect(process.env.MONGODB_URL);
     app.get("/", (req, res) => {
       res.send("Hello World!");
     });
