@@ -117,6 +117,16 @@ const verifyUser = async (req, res) => {
   }
 };
 
+const logoutUser = async(req, res) => {
+  try {
+    res.clearCookie("Authorization"); // Clear the token cookie
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error logging out user:", error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
 
 
-module.exports = { registerUser, loginUser, verifyUser };
+
+module.exports = { registerUser, loginUser, verifyUser, logoutUser };

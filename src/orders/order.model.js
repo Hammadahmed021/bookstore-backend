@@ -1,0 +1,29 @@
+const mongoose = require("mongoose");
+
+const orderSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String },
+    address: {
+      address: { type: String },
+      city: { type: String },
+      country: { type: String },
+      state: { type: String },
+      zipcode: { type: String },
+    },
+    products: [
+      {
+        title: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+      },
+    ],
+    totalPrice: { type: Number, required: true },
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
+
+const Order = mongoose.model("Order", orderSchema);
+
+module.exports = Order;
