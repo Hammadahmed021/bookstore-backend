@@ -20,7 +20,7 @@ const GetAllBooks = async (req, res) => {
     }
 }
 
-const GetBook = async (req, res) => {
+const GetBook = async (req, res) => { 
     try {
         const { id } = req.params;
         const getBook = await Book.findById(id)

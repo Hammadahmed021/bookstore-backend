@@ -45,8 +45,8 @@ const getAllOrders = async (req, res) => {
 // Controller to get a specific order by ID
 const getOrderById = async (req, res) => {
   try {
-    const { orderId } = req.params; // Get the order ID from request params
-    const order = await Order.findById(orderId); // Find the order by ID
+    const { id } = req.params; // Get the order ID from request params
+    const order = await Order.findById(id); // Find the order by ID
 
     if (!order) {
       return res.status(404).json({
