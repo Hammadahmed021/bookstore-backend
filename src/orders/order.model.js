@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false, // Make userId optional for guest orders
+      default: null,
+    }, // You can also set the default value to null if you want},
     name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String },
