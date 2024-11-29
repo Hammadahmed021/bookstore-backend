@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, verifyUser, logoutUser } = require("./user.controller");
+const { registerUser, loginUser, verifyUser, logoutUser, adminLogin } = require("./user.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const router = express.Router();
 
@@ -14,5 +14,8 @@ router.get("/verify", authenticateToken, verifyUser);
 
 //logout user
 router.post("/logout", authenticateToken, logoutUser);
+
+// admin login 
+router.post("/admin-login", adminLogin);
 
 module.exports = router;

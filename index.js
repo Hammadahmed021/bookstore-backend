@@ -17,6 +17,7 @@ app.use(cookieParser()); // Add this line to parse cookies in the request
 const bookRoutes = require("./src/books/book.route");
 const userRoutes = require("./src/users/user.route");
 const orderRoutes = require("./src/orders/order.route");
+const { createAdmin } = require("./src/users/user.controller");
 
 // CORS configuration to allow your frontend (running on http://localhost:5173)
 app.use(
@@ -47,4 +48,8 @@ async function main() {
   }
 }
 
+// createAdmin()
 main();
+
+
+
