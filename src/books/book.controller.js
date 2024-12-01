@@ -2,14 +2,31 @@ const Book = require("./book.model");
 
 const PostBook = async (req, res) => {
     try {
-        const newBook = await Book({ ...req.body })
-        await newBook.save()
-        res.status(200).send({ message: 'Book posted succesfully', book: newBook })
+        const { title, description, category, trending, oldPrice, newPrice } = req.body;
+
+        // Ensure file path is added if a file was uploaded
+        const coverImage = req.file ? req.file.filename : null;
+
+        const newBook = new Book({
+            title,
+            description,
+            category,
+            trending,
+            coverImage,
+            oldPrice,
+            newPrice,
+        });
+
+        await newBook.save();
+
+        res.status(200).send({ message: "Book posted successfully", book: newBook });
     } catch (error) {
         console.error("Error posting book", error);
-        res.status(500).send({ message: 'Failed to post book' })
+        res.status(500).send({ message: "Failed to post book" });
     }
-}
+};
+
+
 const GetAllBooks = async (req, res) => {
     try {
         const getBooks = await Book.find().sort({ createdAt: -1 })
@@ -20,7 +37,7 @@ const GetAllBooks = async (req, res) => {
     }
 }
 
-const GetBook = async (req, res) => { 
+const GetBook = async (req, res) => {
     try {
         const { id } = req.params;
         const getBook = await Book.findById(id)
@@ -50,6 +67,7 @@ const UpdateBook = async (req, res) => {
         res.status(500).send({ message: 'Failed to edit book' })
     }
 }
+
 const DeleteBook = async (req, res) => {
     try {
         const { id } = req.params;

@@ -1,10 +1,11 @@
 const express = require('express');
 const { PostBook, GetAllBooks, GetBook, UpdateBook, DeleteBook } = require('./book.controller');
 const { authenticateToken } = require('../middleware/auth.middleware');
+const upload = require('../middleware/multer.middleware');
 const router = express.Router()
 
 // posting a book 
-router.post('/create', authenticateToken ,PostBook)
+router.post('/create', authenticateToken, upload.single("coverImage") ,PostBook)
 
 // get all books 
 router.get("/get-all", GetAllBooks)

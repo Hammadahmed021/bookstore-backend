@@ -208,6 +208,17 @@ const createAdmin = async () => {
   }
 };
 
+const GetAllUsers = async (req, res) => {
+  try {
+      const getUsers = await User.find().sort({ createdAt: -1 })
+      res.status(200).send(getUsers)
+  } catch (error) {
+      console.error("Error fetching books", error);
+      res.status(500).send({ message: 'Failed to get books' })
+  }
+}
+
+
 module.exports = {
   registerUser,
   loginUser,
@@ -215,4 +226,5 @@ module.exports = {
   logoutUser,
   createAdmin,
   adminLogin,
+  GetAllUsers
 };

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
+const path = require("path");
 const cookieParser = require('cookie-parser');
 
 
@@ -12,12 +13,17 @@ require("dotenv").config();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser()); // Add this line to parse cookies in the request
+// Serve static files from 'uploads' folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const bookRoutes = require("./src/books/book.route");
 const userRoutes = require("./src/users/user.route");
 const orderRoutes = require("./src/orders/order.route");
 const { createAdmin } = require("./src/users/user.controller");
+
+
+
 
 // CORS configuration to allow your frontend (running on http://localhost:5173)
 app.use(
