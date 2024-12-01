@@ -10,9 +10,11 @@ const bookSchema = new mongoose.Schema({
         required: false
     },
     category: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
         required: true,
     },
+    
     trending: {
         type: Boolean,
         required: true,

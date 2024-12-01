@@ -20,6 +20,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const bookRoutes = require("./src/books/book.route");
 const userRoutes = require("./src/users/user.route");
 const orderRoutes = require("./src/orders/order.route");
+const categoriesRoutes = require("./src/categories/category.route")
 const { createAdmin } = require("./src/users/user.controller");
 
 
@@ -38,12 +39,13 @@ app.use(
 app.use("/api/book", bookRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/order", orderRoutes);
+app.use("/api/category", categoriesRoutes);
 
 async function main() {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
     app.get("/", (req, res) => {
-      res.send("Hello World!");
+      res.send("Server connected :)");
     });
 
     app.listen(port, () => {
