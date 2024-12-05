@@ -14,7 +14,7 @@ router.get("/get-all", GetAllBooks)
 router.get("/:id", GetBook)
 
 // update book 
-router.put("/update/:id", authenticateToken, UpdateBook)
+router.put("/update/:id", authenticateToken, upload.single("coverImage"), UpdateBook)
 
 // delete book 
 router.delete("/delete/:id",authenticateToken, DeleteBook)
