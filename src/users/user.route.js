@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, verifyUser, logoutUser, adminLogin, GetAllUsers } = require("./user.controller");
+const { registerUser, loginUser, verifyUser, logoutUser, adminLogin, GetAllUsers, setNewPassword, forgotPassword } = require("./user.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const router = express.Router();
 
@@ -21,6 +21,11 @@ router.post("/admin-login", adminLogin);
 // get all users for admin 
 router.get("/all", authenticateToken, GetAllUsers);
 
+// forgot password
+router.post("/forgot-password", forgotPassword);  // Endpoint to send password reset email
+
+// new password
+router.post("/new-password", authenticateToken, setNewPassword);
 
 
 

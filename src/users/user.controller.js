@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("./user.model");
-const { auth } = require("../../firebaseConfig");
 const admin = require("firebase-admin");
-const { sendRegistrationNotification } = require("../service/sendEmail");
+const { auth } = require("../../firebaseConfig");
+const { sendRegistrationNotification, sendPasswordResetEmail } = require("../service/sendEmail");
 require("dotenv").config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -229,6 +229,75 @@ const GetAllUsers = async (req, res) => {
   }
 }
 
+// get link to reset password
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  try {
+    // Generate the password reset link from Firebase
+    const resetLink = await admin.auth().generatePasswordResetLink(email);
+    console.log(resetLink, 'Generated reset link');
+
+    // Send the password reset email to the user
+    sendPasswordResetEmail(email, resetLink);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password reset link has been sent to your email.',
+    });
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to send password reset link.',
+      error: error.message,
+    });
+  }
+};
+
+// Set New Password: After user clicks reset link
+const setNewPassword = async (req, res) => {
+  const { idToken, newPassword } = req.body;
+
+  if (!idToken || !newPassword) {
+    return res.status(400).json({ message: "ID token and new password are required" });
+  }
+
+  try {
+    // Verify the Firebase ID token
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+
+    // Find user in the database
+    const user = await User.findOne({ firebaseUid: uid });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the MongoDB database
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    console.error("Error setting new password:", error.message);
+    res.status(500).json({
+      message: "Failed to update password",
+      error: error.message,
+    });
+  }
+};
+
 
 module.exports = {
   registerUser,
@@ -237,5 +306,7 @@ module.exports = {
   logoutUser,
   createAdmin,
   adminLogin,
-  GetAllUsers
+  GetAllUsers,
+  forgotPassword,
+  setNewPassword
 };

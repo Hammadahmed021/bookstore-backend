@@ -78,9 +78,27 @@ const sendOrderNotification = (order) => {
   });
 };
 
+// Send the email with the reset link
+const sendPasswordResetEmail = (email, resetLink) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER, // Admin email address
+    to: email, // User's email
+    subject: 'Password Reset Request',
+    text: `We received a request to reset your password. Click the link below to reset your password:\n\n${resetLink}\n\nIf you did not request a password reset, please ignore this email.`,
+  };
 
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending reset email:', error);
+    } else {
+      console.log('Password reset email sent:', info.response);
+    }
+  });
+};
 
 module.exports = {
   sendRegistrationNotification,
   sendOrderNotification,
+  sendPasswordResetEmail
 };
