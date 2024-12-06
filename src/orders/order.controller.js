@@ -1,5 +1,6 @@
 const { mongoose } = require("mongoose");
 const Order = require("./order.model");
+const { sendOrderNotification } = require("../service/sendEmail");
 
 // Controller to create a new order
 const createOrder = async (req, res) => {
@@ -9,6 +10,9 @@ const createOrder = async (req, res) => {
 
     const order = new Order(orderDetails);
     await order.save();
+
+     // Send order notification to customer and admin
+     sendOrderNotification(order);
 
     return res.status(201).json({
       success: true,

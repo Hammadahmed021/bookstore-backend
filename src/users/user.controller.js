@@ -3,13 +3,14 @@ const bcrypt = require("bcryptjs");
 const User = require("./user.model");
 const { auth } = require("../../firebaseConfig");
 const admin = require("firebase-admin");
+const { sendRegistrationNotification } = require("../service/sendEmail");
 require("dotenv").config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
 // Register User API
 const registerUser = async (req, res) => {
-  const { email, password, name, idToken } = req.body;
+  const { email, password, name, idToken, role } = req.body;
 
   if (!email || !password || !name || !idToken) {
     return res.status(400).json({ message: "All fields are required" });
@@ -37,9 +38,19 @@ const registerUser = async (req, res) => {
 
     await newUser.save();
 
+    sendRegistrationNotification({
+      name: newUser.name,
+      email: newUser.email,
+    });
+
     res
       .status(201)
-      .json({ message: "User registered successfully", userId: uid });
+      .json({
+        message: "User registered successfully", userId: uid, email: newUser.email,
+        name: newUser.name,
+        role: newUser.role
+      });
+
   } catch (error) {
     console.error("Error registering user:", error.message);
     res
@@ -210,11 +221,11 @@ const createAdmin = async () => {
 
 const GetAllUsers = async (req, res) => {
   try {
-      const getUsers = await User.find().sort({ createdAt: -1 })
-      res.status(200).send(getUsers)
+    const getUsers = await User.find().sort({ createdAt: -1 })
+    res.status(200).send(getUsers)
   } catch (error) {
-      console.error("Error fetching books", error);
-      res.status(500).send({ message: 'Failed to get books' })
+    console.error("Error fetching books", error);
+    res.status(500).send({ message: 'Failed to get books' })
   }
 }
 
