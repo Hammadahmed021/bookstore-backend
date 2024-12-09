@@ -21,6 +21,7 @@ const bookRoutes = require("./src/books/book.route");
 const userRoutes = require("./src/users/user.route");
 const orderRoutes = require("./src/orders/order.route");
 const categoriesRoutes = require("./src/categories/category.route")
+const favoritesRoutes = require("./src/favorites/favorites.route")
 const { createAdmin } = require("./src/users/user.controller");
 
 // CORS configuration to allow your frontend (running on http://localhost:5173)
@@ -37,6 +38,7 @@ app.use("/api/book", bookRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/category", categoriesRoutes);
+app.use('/api/favorites', favoritesRoutes);
 
 async function main() {
   try {
