@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(cookieParser()); // Add this line to parse cookies in the request
 // Serve static files from 'uploads' folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(__dirname + '/public'));
 
 
 const bookRoutes = require("./src/books/book.route");
