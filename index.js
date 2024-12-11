@@ -25,14 +25,27 @@ const favoritesRoutes = require("./src/favorites/favorites.route")
 const { createAdmin } = require("./src/users/user.controller");
 
 // CORS configuration to allow your frontend (running on http://localhost:5173)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://bookstore-frontend-dusky.vercel.app',
+];
+
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://bookstore-frontend-dusky.vercel.app'], // Frontend URL (No trailing slash)
-    credentials: true, // Allow cookies and credentials to be sent
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use("/api/book", bookRoutes);
 app.use("/api/user", userRoutes);
