@@ -26,8 +26,8 @@ const { createAdmin } = require("./src/users/user.controller");
 
 // CORS configuration to allow your frontend (running on http://localhost:5173)
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://bookstore-frontend-dusky.vercel.app',
+  // 'http://localhost:5173',
+  'https://bookstore-frontend-dusky.vercel.app'
 ];
 
 app.use(
