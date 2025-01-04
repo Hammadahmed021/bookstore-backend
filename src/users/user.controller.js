@@ -236,10 +236,14 @@ const forgotPassword = async (req, res) => {
   if (!email) {
     return res.status(400).json({ message: 'Email is required' });
   }
-
+  const actionCodeSettings = {
+    url: 'http://localhost:5173/forgot-password', // Adjust the port as per your local setup
+    handleCodeInApp: true,
+  };
+  
   try {
     // Generate the password reset link from Firebase
-    const resetLink = await admin.auth().generatePasswordResetLink(email);
+    const resetLink = await admin.auth().generatePasswordResetLink(email, actionCodeSettings);
     console.log(resetLink, 'Generated reset link');
 
     // Send the password reset email to the user
@@ -271,32 +275,36 @@ const setNewPassword = async (req, res) => {
     // Verify the Firebase ID token
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
+    console.log("Decoded UID:", uid);
 
     // Find user in the database
     const user = await User.findOne({ firebaseUid: uid });
+    console.log("Fetched user:", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Hash the new password before saving it
+    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log("Hashed password:", hashedPassword);
 
-    // Update the password in the MongoDB database
+    // Update password in MongoDB
     user.password = hashedPassword;
     await user.save();
+    console.log("Password updated in MongoDB.");
 
-    res.status(200).json({
-      message: "Password updated successfully",
-    });
+    // Optionally update Firebase user password
+    await admin.auth().updateUser(uid, { password: newPassword });
+    console.log("Firebase password updated.");
+
+    res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     console.error("Error setting new password:", error.message);
-    res.status(500).json({
-      message: "Failed to update password",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Failed to update password", error: error.message });
   }
 };
+
 
 
 module.exports = {

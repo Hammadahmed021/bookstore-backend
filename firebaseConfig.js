@@ -1,7 +1,7 @@
-const admin = require("firebase-admin");
 require("dotenv").config();
+const admin = require("firebase-admin");
+const serviceAccount = require("./book-store-2d290-firebase-adminsdk-pc40o-334402baef.json"); // Replace with your file path
 
-const serviceAccount = require("./book-store-2d290-firebase-adminsdk.json"); // Replace with your file path
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
