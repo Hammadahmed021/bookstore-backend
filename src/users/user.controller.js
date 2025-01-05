@@ -305,7 +305,63 @@ const setNewPassword = async (req, res) => {
   }
 };
 
+// Google login/signup
+const googleAuth = async (req, res) => {
+  const { idToken } = req.body;
 
+  if (!idToken) {
+    return res.status(400).json({ message: "ID token is required" });
+  }
+
+  try {
+    // Verify the Google ID token
+       
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email, name, picture } = decodedToken;
+
+    // Check if the user already exists
+    let user = await User.findOne({ firebaseUid: uid });
+
+    if (!user) {
+      // If user doesn't exist, create a new user
+      user = new User({
+        name: name || "Unknown",
+        email,
+        firebaseUid: uid,
+        role: "user", // Default role
+        token: idToken, // Store the ID token
+        password: null, // Ensure password is null or omitted
+      });
+
+      await user.save();
+
+      return res.status(201).json({
+        message: "User registered successfully",
+        userId: uid,
+        email,
+        name: user.name,
+        role: user.role,
+      });
+    }
+
+    // Update token if user exists
+    user.token = idToken;
+    await user.save();
+
+    res.status(200).json({
+      message: "Login successful",
+      userId: uid,
+      email,
+      name: user.name,
+      role: user.role,
+    });
+  } catch (error) {
+    console.error("Error during Google authentication:", error.message);
+    res
+      .status(500)
+      .json({ message: "Failed to authenticate with Google", error: error.message });
+  }
+};
 
 module.exports = {
   registerUser,
@@ -316,5 +372,6 @@ module.exports = {
   adminLogin,
   GetAllUsers,
   forgotPassword,
-  setNewPassword
+  setNewPassword,
+  googleAuth
 };

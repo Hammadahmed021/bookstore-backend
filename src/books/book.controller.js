@@ -37,7 +37,6 @@ const PostBook = async (req, res) => {
   }
 };
 
-
 const GetAllBooks = async (req, res) => {
   try {
     const getBooks = await Book.find().sort({ createdAt: -1 });
@@ -51,16 +50,26 @@ const GetAllBooks = async (req, res) => {
 const GetBook = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Fetch the book by ID
     const getBook = await Book.findById(id);
     if (!getBook) {
-      res.status(404).send({ message: "Book not found" });
+      return res.status(404).send({ message: "Book not found" });
     }
-    res.status(200).send(getBook);
+
+    // Fetch related books from the same category
+    const relatedBooks = await Book.find({ category: getBook.category })
+      .limit(3) // Fetch only a few related books, you can adjust this number
+      .exec();
+
+    // Send back the book data along with the related books
+    res.status(200).send({ book: getBook, relatedBooks });
   } catch (error) {
     console.error("Error fetching book", error);
     res.status(500).send({ message: "Failed to get book" });
   }
 };
+
 
 const UpdateBook = async (req, res) => {
   try {

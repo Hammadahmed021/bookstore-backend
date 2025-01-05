@@ -95,7 +95,6 @@ const UpdateCategory = async (req, res) => {
       res.status(500).json({ success: false, message: error.message });
     }
   };
-  
 
 // Delete a category
 const DeleteCategory = async (req, res) => {

@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, verifyUser, logoutUser, adminLogin, GetAllUsers, setNewPassword, forgotPassword } = require("./user.controller");
+const { registerUser, loginUser, verifyUser, logoutUser, adminLogin, GetAllUsers, setNewPassword, forgotPassword, googleAuth } = require("./user.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const router = express.Router();
 
@@ -27,6 +27,8 @@ router.post("/forgot-password", forgotPassword);  // Endpoint to send password r
 // new password
 router.post("/new-password", authenticateToken, setNewPassword);
 
+// Route for Google authentication
+router.post("/auth/google", googleAuth);
 
 
 module.exports = router;
