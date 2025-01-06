@@ -59,8 +59,8 @@ const GetBook = async (req, res) => {
 
     // Fetch related books from the same category
     const relatedBooks = await Book.find({ category: getBook.category })
-      .limit(3) // Fetch only a few related books, you can adjust this number
-      .exec();
+    .exec();
+    // limit(//number)// Fetch only a few related books, you can adjust this number
 
     // Send back the book data along with the related books
     res.status(200).send({ book: getBook, relatedBooks });
