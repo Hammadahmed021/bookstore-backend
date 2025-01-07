@@ -1,8 +1,5 @@
 const Book = require("./book.model");
 const Category = require("../categories/category.model")
-const fs = require("fs");
-const path = require("path");
-const  uploadFileCloudinary = require("../config/cloudinaryConfig")
 
 const PostBook = async (req, res) => {
   try {
@@ -84,25 +81,8 @@ const UpdateBook = async (req, res) => {
       return res.status(404).send({ message: "Book not found" });
     }
 
-    let coverImage = existingBook.coverImage; // Default to the existing image
-
-    if (req.file) {
-      const localPath = path.join(__dirname, `../uploads/${req.file.filename}`);
-
-      // Upload file to Cloudinary
-      const cloudinaryResponse = await uploadFileCloudinary(localPath);
-
-      if (!cloudinaryResponse) {
-        return res.status(500).send({ message: "Failed to upload to Cloudinary" });
-      }
-
-      coverImage = cloudinaryResponse.url; // Get the uploaded file's URL
-
-      // Delete the locally stored file after uploading to Cloudinary
-      fs.unlink(localPath, (err) => {
-        if (err) console.error("Failed to delete local file", err);
-      });
-    }
+    // Handle file upload
+    const coverImage = req.file ? req.file.filename : existingBook.coverImage;
 
     // Update the book fields
     const updatedBook = await Book.findByIdAndUpdate(
