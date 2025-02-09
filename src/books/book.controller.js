@@ -70,7 +70,6 @@ const GetBook = async (req, res) => {
   }
 };
 
-
 const UpdateBook = async (req, res) => {
   try {
     const { id } = req.params;
